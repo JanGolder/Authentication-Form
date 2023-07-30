@@ -1,8 +1,9 @@
-import React, { useState, useReducer, useEffect } from "react";
+import React, { useState, useReducer, useEffect, useContext } from "react";
 
 import Card from "../UI/Card/Card";
 import classes from "./Login.module.css";
 import Button from "../UI/Button/Button";
+import AuthContext from "../../store/auth-context";
 
 
 const emailReducer = (state, action)=>{
@@ -20,13 +21,13 @@ const passwordReducer = (state, action)=>{
   if(action.type === 'USER_INPUT'){
     return {value: action.val, isValid: action.val.trim().length > 6}
   }
-  if (action.type === 'USER_BLUR'){
+  if (action.type === 'INPUT_BLUR'){
     return {value: state.value, isValid: state.value.trim().length > 6}
   }
   return {value: '', isValid: false}
 }
 
-const Login = (props) => {
+const Login = () => {
   // const [enteredEmail, setEnteredEmail] = useState("");
   // const [emailIsValid, setEmailIsValid] = useState();
   // const [enteredPassword, setEnteredPassword] = useState("");
@@ -37,8 +38,10 @@ const [emailState, dispatchEmail] = useReducer(emailReducer, {value: '', isValid
 
 const [passwordState, dispatchPassword] = useReducer(passwordReducer, {value: '', isValid: null});
 
-const {emailIsValid} = emailState;
-const {passwordIsValid} = passwordState;
+const authCtx = useContext(AuthContext);
+
+const {isValid:emailIsValid} = emailState;
+const {isValid:passwordIsValid} = passwordState;
 
 
   useEffect(() => {
@@ -80,7 +83,7 @@ const {passwordIsValid} = passwordState;
 
   const submitHandler = (event) => {
     event.preventDefault();
-    props.onLogin(emailState.value, passwordState.value);
+    authCtx.onLogin(emailState.value, passwordState.value);
   };
 
   return (
